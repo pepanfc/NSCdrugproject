@@ -10,7 +10,7 @@ import py3Dmol
 from stmol import showmol
 from collections import Counter
 import math
-from featex import AAC, APAAC, PAAC, DPC
+from featex1 import AAC, APAAC, PAAC, DPC
 
 # ===== CSS Custom Style =====
 st.set_page_config(page_title="Drug Delivery Peptide Prediction", layout="wide")
