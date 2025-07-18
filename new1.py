@@ -198,11 +198,11 @@ def main():
 
         # === ดึงฟีเจอร์ทั้ง 4 แบบ ===
         feat_aac, _ = AAC(fasta_records)
-        feat_apaac, _ = APAAC(fasta_records, lambdaValue=1)
+        feat_dpc, _ = DPC(fasta_records, gap=0)
         feat_paac, _ = PAAC(fasta_records, lambdaValue=1)
-        feat_dpc, _ = DPC(fasta_records, gap=0)  # <<< เพิ่ม DPC
+        feat_apaac, _ = APAAC(fasta_records, lambdaValue=1)
 
-        all_feats = np.hstack((feat_aac, feat_apaac, feat_paac, feat_dpc))
+        all_feats = np.hstack((feat_aac, feat_dpc, feat_paac, feat_apaac))
 
         minmax_scaler = MinMaxScaler().fit(all_feats)
         standard_scaler = StandardScaler().fit(minmax_scaler.transform(all_feats))
