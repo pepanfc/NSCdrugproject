@@ -8,9 +8,8 @@ from sklearn.preprocessing import MinMaxScaler, StandardScaler
 import requests
 import py3Dmol
 from stmol import showmol
-from collections import Counter
-import math
-from featex1 import AAC, APAAC, PAAC, DPC
+
+from featex1 import AAC, APAAC, PAAC, DPC, featex
 
 # ===== CSS Custom Style =====
 st.set_page_config(page_title="Drug Delivery Peptide Prediction", layout="wide")
@@ -171,12 +170,10 @@ if not st.session_state.license_accepted:
 
 def main():
     st.title("🧬 Peptide-Based Drug Delivery Prediction")
-    st.markdown("""
-    <div style='font-size:1.15rem; font-weight:500; color:#1A4B7A; text-align:center; margin-bottom:18px;'>
+    st.markdown("""<div style='font-size:1.15rem; font-weight:500; color:#1A4B7A; text-align:center; margin-bottom:18px;'>
         Predict the potential of your peptide sequences as drug delivery using post-train XgBoost model.<br>
         <b>Upload your <code>.fasta</code> file to begin.</b>
-    </div>
-    """, unsafe_allow_html=True)
+    </div>""", unsafe_allow_html=True)
 
     with st.container():
         st.markdown('<div class="card">', unsafe_allow_html=True)
@@ -194,20 +191,8 @@ def main():
             st.error("No sequences found!")
             return
 
-        # === ดึงฟีเจอร์ทั้ง 4 แบบ ===
-        feat_aac, _ = AAC(fasta_records)
-        feat_apaac, _ = APAAC(fasta_records, lambdaValue=1)
-        feat_paac, _ = PAAC(fasta_records, lambdaValue=1)
-        feat_dpc, _ = DPC(fasta_records, gap=0) 
-
-        all_feats = np.hstack((feat_aac, feat_apaac, feat_paac, feat_dpc))
-        #st.write(
-        #f"AAC: {feat_aac.shape[1]}, "
-        #f"APAAC: {feat_apaac.shape[1]}, "
-        #f"PAAC: {feat_paac.shape[1]}, "
-        #f"DPC: {feat_dpc.shape[1]}, "
-        #f"Total: {all_feats.shape[1]}"
-        #    )
+        # ใช้ featex จาก featex1.py
+        all_feats = featex(fasta_records)
         minmax_scaler = MinMaxScaler().fit(all_feats)
         standard_scaler = StandardScaler().fit(minmax_scaler.transform(all_feats))
         X_test = standard_scaler.transform(minmax_scaler.transform(all_feats))
