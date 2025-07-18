@@ -189,8 +189,6 @@ def main():
     if uploaded_file:
         fasta_string = uploaded_file.read().decode("utf-8")
         fasta_io = StringIO(fasta_string)
-
-        # === ปรับตรงนี้: รับข้อมูลเป็น list of (name, seq) เสมอ ===
         fasta_records = [(rec.id, str(rec.seq)) for rec in SeqIO.parse(fasta_io, 'fasta')]
         if not fasta_records:
             st.error("No sequences found!")
@@ -200,10 +198,16 @@ def main():
         feat_aac, _ = AAC(fasta_records)
         feat_apaac, _ = APAAC(fasta_records, lambdaValue=1)
         feat_paac, _ = PAAC(fasta_records, lambdaValue=1)
-        feat_dpc, _ = DPC(fasta_records, gap=0)  # <<< เพิ่ม DPC
+        feat_dpc, _ = DPC(fasta_records, gap=0) 
 
         all_feats = np.hstack((feat_aac, feat_apaac, feat_paac, feat_dpc))
-
+        #st.write(
+        #f"AAC: {feat_aac.shape[1]}, "
+        #f"APAAC: {feat_apaac.shape[1]}, "
+        #f"PAAC: {feat_paac.shape[1]}, "
+        #f"DPC: {feat_dpc.shape[1]}, "
+        #f"Total: {all_feats.shape[1]}"
+        #    )
         minmax_scaler = MinMaxScaler().fit(all_feats)
         standard_scaler = StandardScaler().fit(minmax_scaler.transform(all_feats))
         X_test = standard_scaler.transform(minmax_scaler.transform(all_feats))
