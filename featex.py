@@ -24,12 +24,15 @@ def APAAC(fastas, lambdaValue=30, w=0.05, **kw):
     ]
     AA = ''.join(records[0].split()[1:])
     AADict = {aa: i for i, aa in enumerate(AA)}
+
+    # เลือกใช้เฉพาะ 2 property แรก (hydrophobicity, hydrophilicity)
     AAProperty = []
     AAPropertyNames = []
-    for line in records[1:]:
+    for line in records[1:3]:   # records[1:3] จะเอา 2 property แรก
         arr = line.rstrip().split()
         AAProperty.append([float(j) for j in arr[1:]])
         AAPropertyNames.append(arr[0])
+
     # Normalize
     AAProperty1 = []
     for arr in AAProperty:
@@ -39,8 +42,8 @@ def APAAC(fastas, lambdaValue=30, w=0.05, **kw):
 
     encodings = []
     header = ['Pc1.' + aa for aa in AA]
-    for j in range(1, lambdaValue + 1):
-        for pname in AAPropertyNames:
+    for pname in AAPropertyNames:
+        for j in range(1, lambdaValue + 1):
             header.append('Pc2.' + pname + '.' + str(j))
 
     for name, seq in fastas:
