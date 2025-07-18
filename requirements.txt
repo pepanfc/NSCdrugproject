@@ -9,3 +9,4 @@ py3Dmol
 stmol
 requests
 xgboost
+ipython_genutils
