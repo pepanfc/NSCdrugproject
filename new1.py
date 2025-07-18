@@ -8,8 +8,9 @@ from sklearn.preprocessing import MinMaxScaler, StandardScaler
 import requests
 import py3Dmol
 from stmol import showmol
-
-from featex1 import AAC, APAAC, PAAC, DPC, featex
+from collections import Counter
+import math
+from featex1 import AAC, APAAC, PAAC, DPC
 
 # ===== CSS Custom Style =====
 st.set_page_config(page_title="Drug Delivery Peptide Prediction", layout="wide")
@@ -146,26 +147,7 @@ def predict_structure(sequence):
         st.error("Failed to get 3D structure from server. Try again later.")
         return None
 
-def read_protein_sequences(file):
-    if os.path.exists(file) == False:
-        print('Error: file %s does not exist.' % file)
-        sys.exit(1)
-    with open(file,  errors='ignore') as f:
-        records = f.read()
-    if re.search('>', records) == None:
-        print('Error: the input file %s seems not in FASTA format!' % file)
-        sys.exit(1)
-    records = records.split('>')[1:]
-    fasta_sequences = []
-    for fasta in records:
-        array = fasta.split('\n')
-        header, sequence = array[0].split()[0], re.sub('[^ACDEFGHIKLMNPQRSTVWY-]', '', ''.join(array[1:]).upper())
-        header_array = header.split('|')
-        name = header_array[0]
-        #label = 'None' #header_array[1] if len(header_array) >= 1 else '0'
-        #label_train = 'None' #header_array[2] if len(header_array) >= 2 else 'training'
-        fasta_sequences.append([name, sequence])
-    return fasta_sequences
+
 
 LICENSE_TEXT = """
 <div style="border:2.5px solid #1A4B7A; border-radius:18px; padding:26px 22px; background:#f6fafd; margin:32px 0;">
@@ -189,10 +171,12 @@ if not st.session_state.license_accepted:
 
 def main():
     st.title("🧬 Peptide-Based Drug Delivery Prediction")
-    st.markdown("""<div style='font-size:1.15rem; font-weight:500; color:#1A4B7A; text-align:center; margin-bottom:18px;'>
+    st.markdown("""
+    <div style='font-size:1.15rem; font-weight:500; color:#1A4B7A; text-align:center; margin-bottom:18px;'>
         Predict the potential of your peptide sequences as drug delivery using post-train XgBoost model.<br>
         <b>Upload your <code>.fasta</code> file to begin.</b>
-    </div>""", unsafe_allow_html=True)
+    </div>
+    """, unsafe_allow_html=True)
 
     with st.container():
         st.markdown('<div class="card">', unsafe_allow_html=True)
@@ -205,13 +189,21 @@ def main():
     if uploaded_file:
         fasta_string = uploaded_file.read().decode("utf-8")
         fasta_io = StringIO(fasta_string)
+
+        # === ปรับตรงนี้: รับข้อมูลเป็น list of (name, seq) เสมอ ===
         fasta_records = [(rec.id, str(rec.seq)) for rec in SeqIO.parse(fasta_io, 'fasta')]
         if not fasta_records:
             st.error("No sequences found!")
             return
 
-        # ใช้ featex จาก featex1.py
-        all_feats = featex(fasta_records)
+        # === ดึงฟีเจอร์ทั้ง 4 แบบ ===
+        feat_aac, _ = AAC(fasta_records)
+        feat_apaac, _ = APAAC(fasta_records, lambdaValue=1)
+        feat_paac, _ = PAAC(fasta_records, lambdaValue=1)
+        feat_dpc, _ = DPC(fasta_records, gap=0)  # <<< เพิ่ม DPC
+
+        all_feats = np.hstack((feat_aac, feat_apaac, feat_paac, feat_dpc))
+
         minmax_scaler = MinMaxScaler().fit(all_feats)
         standard_scaler = StandardScaler().fit(minmax_scaler.transform(all_feats))
         X_test = standard_scaler.transform(minmax_scaler.transform(all_feats))
