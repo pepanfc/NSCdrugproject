@@ -4,15 +4,17 @@ import math
 import re
 from collections import Counter
 
+import numpy as np
+import re
+from collections import Counter
+import math
+
 def AAC(fastas, **kw):
     AA = 'ACDEFGHIKLMNPQRSTVWY'
-    #AA = 'ARNDCQEGHILKMFPSTWYV'
     encodings = []
     header = []
     for i in AA:
         header.append(i)
-    #encodings.append(header)
-
     for i in fastas:
         name, sequence = i[0], re.sub('-', '', i[1])
         count = Counter(sequence)
@@ -23,7 +25,6 @@ def AAC(fastas, **kw):
             code.append(count[aa])
         encodings.append(code)
     return np.array(encodings, dtype=float), header
-
 
 def APAAC(fastas, lambdaValue=30, w=0.05, **kw):
     records = []
@@ -76,7 +77,6 @@ def APAAC(fastas, lambdaValue=30, w=0.05, **kw):
         encodings.append(code)
     return np.array(encodings, dtype=float), header
 
-
 def DPC(fastas, gap, **kw):
     AA = 'ACDEFGHIKLMNPQRSTVWY'
     encodings = []
@@ -98,9 +98,9 @@ def DPC(fastas, gap, **kw):
         code = code + tmpCode
         encodings.append(code)
     return np.array(encodings, dtype=float), header
+
 def Rvalue(aa1, aa2, AADict, Matrix):
     return sum([(Matrix[i][AADict[aa1]] - Matrix[i][AADict[aa2]]) ** 2 for i in range(len(Matrix))]) / len(Matrix)
-
 
 def PAAC(fastas, lambdaValue=30, w=0.05, **kw):
     records = []
@@ -148,6 +148,29 @@ def PAAC(fastas, lambdaValue=30, w=0.05, **kw):
         encodings.append(code)
     return np.array(encodings, dtype=float), header
 
+def featex(fasta):
+    fname = []
+    feat0 = AAC(fasta)[0]; fname.append('AAC')
+    feat1 = DPC(fasta, 0)[0]; fname.append('DPC')
+    feat2 = PAAC(fasta, 1)[0]; fname.append('PAAC')
+    feat3 = APAAC(fasta, 1)[0]; fname.append('APAAC')
+
+    allfeat_pos = np.hstack((
+                             feat0, 
+                             feat1,
+                             feat2,
+                             feat3
+                            ))
+
+    numdesc = len(fname)
+    f = []
+    before = 0
+    for i in range(numdesc):
+        after = before + eval('feat%d.shape[1]' % (i))
+        f.append(list(range(before, after)))
+        before = after
+
+    return allfeat_pos, f, fname
 def featex(fasta):
     fname = []
     feat0 = AAC(fasta)[0]; fname.append('AAC')
