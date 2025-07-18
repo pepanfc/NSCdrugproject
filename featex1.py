@@ -1,9 +1,3 @@
-# featex1.py
-import numpy as np
-import math
-import re
-from collections import Counter
-
 import numpy as np
 import re
 from collections import Counter
@@ -155,13 +149,7 @@ def featex(fasta):
     feat2 = PAAC(fasta, 1)[0]; fname.append('PAAC')
     feat3 = APAAC(fasta, 1)[0]; fname.append('APAAC')
 
-    allfeat_pos = np.hstack((
-                             feat0, 
-                             feat1,
-                             feat2,
-                             feat3
-                            ))
-
+    allfeat_pos = np.hstack((feat0, feat1, feat2, feat3))
     numdesc = len(fname)
     f = []
     before = 0
@@ -169,28 +157,4 @@ def featex(fasta):
         after = before + eval('feat%d.shape[1]' % (i))
         f.append(list(range(before, after)))
         before = after
-
-    return allfeat_pos, f, fname
-def featex(fasta):
-    fname = []
-    feat0 = AAC(fasta)[0]; fname.append('AAC')
-    feat1 = DPC(fasta, 0)[0]; fname.append('DPC')
-    feat2 = PAAC(fasta, 1)[0]; fname.append('PAAC')
-    feat3 = APAAC(fasta, 1)[0]; fname.append('APAAC')
-
-    allfeat_pos = np.hstack((
-                             feat0, 
-                             feat1,
-                             feat2,
-                             feat3
-                            ))
-
-    numdesc = len(fname)
-    f = []
-    before = 0
-    for i in range(numdesc):
-        after = before + eval('feat%d.shape[1]' % (i))
-        f.append(list(range(before, after)))
-        before = after
-
     return allfeat_pos, f, fname
