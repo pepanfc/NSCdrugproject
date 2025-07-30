@@ -65,10 +65,10 @@ def DDact(pct):
     else: return "⚫ Very Low Potential: This peptide is predicted to have very low suitability."
 
 AA_COLOR_MAP = {
-    'A': '#1F77B4',  'C': '#FFD700', 'D': '#2CA02C', 'E': '#D62728', 'F': '#984EA3',
-    'G': '#A9A9A9',  'H': '#1F78B4', 'I': '#4DAF4A', 'K': '#E7298A', 'L': '#377EB8',
-    'M': '#FF1493',  'N': '#A65628', 'P': '#F781BF', 'Q': '#F0E442', 'R': '#000000',
-    'S': '#FFFF00',  'T': '#00FF00', 'V': '#FF4500', 'W': '#A52A2A', 'Y': '#00BFFF'
+    'A': '#FF5733',  'C': '#33FF57', 'D': '#3357FF', 'E': '##FFC300', 'F': '#8E44AD',
+    'G': '#16A085',  'H': '#E74C3C', 'I': '#2C3E50', 'K': '#D35400', 'L': '#27AE60',
+    'M': '#3498DB',  'N': '#F1C40F', 'P': '#9B59B6', 'Q': '#34495E', 'R': '#EC7063',
+    'S': '#48C9B0',  'T': '#7D3C98', 'V': '#1ABC9C', 'W': '#F39C12', 'Y': '#95A5A6'
 }
 AA_NAME_MAP = {
     'A': 'Alanine',   'C': 'Cysteine',    'D': 'Aspartic acid', 'E': 'Glutamic acid',
