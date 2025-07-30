@@ -287,9 +287,9 @@ def main():
     <div style='margin-top:20px; text-align:center; font-size:1.04rem; color:#888;'>
     <b>Training Data Source:</b>
     <a href="http://crdd.osdd.net/raghava/satpdb/" target="_blank">Satpdb</a> |
-    <a href="http://peptidome.jcvi.org/peptipedia/" target="_blank">Peptipedia</a> |
+    <a href="https://app.peptipedia.cl/" target="_blank">Peptipedia</a> |
     <a href="https://www.uniprot.org/" target="_blank">UniProt</a> |
-    <a href="http://aps.unmc.edu/APD3/" target="_blank">APD3</a><br>
+    <a href="https://aps.unmc.edu/AP/" target="_blank">APD3</a><br>
     <b>Developed by:</b> Sippatorn Suwanro, Waris Ihaloh, Poramet Sinprasert</a><br>
     <b>Institution:</b> Prince of Songkla University Demonstration School (Secondary)</a>
     </div>
